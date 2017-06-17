@@ -15,7 +15,7 @@ class StaInfo(object):
     """
     An object contains a station information
     ========================================================================
-    General Parameters:
+    Parameters:
     stacode    - station name
     network    - network
     lon,lat    - position for station
@@ -43,13 +43,11 @@ class StaInfo(object):
         return
     
     def GetPoslon(self):
-        if self.lon<0:
-            self.lon=self.lon+360.
+        if self.lon<0: self.lon=self.lon+360.
         return
     
     def GetNeglon(self):
-        if self.lon>180.:
-            self.lon=self.lon-360.
+        if self.lon>180.: self.lon=self.lon-360.
         return
         
 class StaLst(object):
@@ -109,7 +107,6 @@ class StaLst(object):
         """
         with open(stafile, 'r') as f:
             Sta=[]
-            f.readline()
             for lines in f.readlines():
                 lines   = lines.split()
                 network = lines[1]
@@ -166,37 +163,36 @@ class StaLst(object):
                 if ilon == Nlon -1 and ilat == Nlat -1:
                     print 'Station range: minlat=', minlat, ' maxlat=', lat, 'minlon=', minlon,'maxlon=',lon
         return
-    # 
-    # 
-    # def GetInventory(self, outfname=None, chans=['BXZ'], source='CU'):
-    #     """
-    #     Get obspy inventory, used for ASDF dataset
-    #     ==============================================================================
-    #     Input Parameters:
-    #     outfname  - output stationxml file name (default = None, no output)
-    #     chans     - channel list
-    #     source    - source string
-    #     Output:
-    #     obspy.core.inventory.inventory.Inventory object, stationxml file(optional)
-    #     ==============================================================================
-    #     """
-    #     stations=[]
-    #     total_number_of_channels=len(chans)
-    #     site=obspy.core.inventory.util.Site(name='01')
-    #     creation_date=obspy.core.utcdatetime.UTCDateTime(0)
-    #     for sta in self.stations:
-    #         channels=[]
-    #         for chan in chans:
-    #             channel=obspy.core.inventory.channel.Channel(code=chan, location_code='01', latitude=sta.lat, longitude=sta.lon,
-    #                     elevation=sta.elevation, depth=0.0)
-    #             channels.append(channel)
-    #         station=obspy.core.inventory.station.Station(code=sta.stacode, latitude=sta.lat, longitude=sta.lon, elevation=sta.elevation,
-    #                 site=site, channels=channels, total_number_of_channels = total_number_of_channels, creation_date = creation_date)
-    #         stations.append(station)
-    #     network=obspy.core.inventory.network.Network(code=sta.network, stations=stations)
-    #     networks=[network]
-    #     inv=obspy.core.inventory.inventory.Inventory(networks=networks, source=source)
-    #     if outfname!=None:
-    #         inv.write(outfname, format='stationxml')
-    #     return inv
+    
+    
+    def GetInventory(self, outfname=None, chans=['BXZ'], source='CU'):
+        """
+        Get obspy inventory, used for ASDF dataset
+        ==============================================================================
+        Input Parameters:
+        outfname  - output stationxml file name (default = None, no output)
+        chans     - channel list
+        source    - source string
+        Output:
+        obspy.core.inventory.inventory.Inventory object, stationxml file(optional)
+        ==============================================================================
+        """
+        stations=[]
+        total_number_of_channels=len(chans)
+        site=obspy.core.inventory.util.Site(name='01')
+        creation_date=obspy.core.utcdatetime.UTCDateTime(0)
+        for sta in self.stations:
+            channels=[]
+            for chan in chans:
+                channel=obspy.core.inventory.channel.Channel(code=chan, location_code='01', latitude=sta.lat, longitude=sta.lon,
+                        elevation=sta.elevation, depth=0.0)
+                channels.append(channel)
+            station=obspy.core.inventory.station.Station(code=sta.stacode, latitude=sta.lat, longitude=sta.lon, elevation=sta.elevation,
+                    site=site, channels=channels, total_number_of_channels = total_number_of_channels, creation_date = creation_date)
+            stations.append(station)
+        network=obspy.core.inventory.network.Network(code=sta.network, stations=stations)
+        networks=[network]
+        inv=obspy.core.inventory.inventory.Inventory(networks=networks, source=source)
+        if outfname!=None: inv.write(outfname, format='stationxml')
+        return inv
     
